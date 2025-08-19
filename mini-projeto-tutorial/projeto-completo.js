@@ -24,143 +24,208 @@ let numeroVendasDia = 0;
 // 2. BANCO DE DADOS DE PRODUTOS (Passo 2)
 // =============================================================================
 
-const produtos = [
-    {
-        id: 1,
-        nome: "iPhone 15 Pro",
-        preco: 8999.00,
-        categoria: "Smartphones",
-        estoque: 12,
-        descricao: "iPhone 15 Pro 256GB Titânio Natural",
-        peso: 0.187,
+// FACTORY FUNCTION PARA CRIAR PRODUTOS
+function criarProduto(id, nome, preco, categoria, estoque, descricao, peso, avaliacoes = 5.0) {
+    return {
+        id,
+        nome,
+        preco,
+        categoria,
+        estoque,
+        descricao,
+        peso,
         ativo: true,
-        avaliacoes: 4.8,
+        avaliacoes,
+        dataCadastro: new Date(),
         
+        // Método para calcular preço com desconto
         calcularPrecoComDesconto(percentual) {
+            if (percentual < 0 || percentual > 100) {
+                console.log("⚠️ Percentual de desconto deve estar entre 0 e 100");
+                return this.preco;
+            }
             return this.preco * (1 - percentual / 100);
         },
         
+        // Método para verificar disponibilidade
         verificarDisponibilidade(quantidade = 1) {
             return this.ativo && this.estoque >= quantidade;
         },
         
+        // Método para reduzir estoque
         reduzirEstoque(quantidade) {
             if (this.verificarDisponibilidade(quantidade)) {
                 this.estoque -= quantidade;
                 return true;
             }
             return false;
-        }
-    },
-    {
-        id: 2,
-        nome: "MacBook Pro M3",
-        preco: 15999.00,
-        categoria: "Notebooks",
-        estoque: 8,
-        descricao: "MacBook Pro 14 M3 512GB Space Gray",
-        peso: 1.6,
-        ativo: true,
-        avaliacoes: 4.9,
-        
-        calcularPrecoComDesconto(percentual) {
-            return this.preco * (1 - percentual / 100);
         },
         
-        verificarDisponibilidade(quantidade = 1) {
-            return this.ativo && this.estoque >= quantidade;
-        },
-        
-        reduzirEstoque(quantidade) {
-            if (this.verificarDisponibilidade(quantidade)) {
-                this.estoque -= quantidade;
+        // Método para adicionar estoque
+        adicionarEstoque(quantidade) {
+            if (quantidade > 0) {
+                this.estoque += quantidade;
                 return true;
             }
             return false;
+        },
+        
+        // Método para ativar/desativar produto
+        alterarStatus(novoStatus) {
+            this.ativo = novoStatus;
+            return this.ativo;
+        },
+        
+        // Método para obter informações resumidas
+        obterResumo() {
+            const status = this.ativo ? "Ativo" : "Inativo";
+            const disponibilidade = this.estoque > 0 ? "Disponível" : "Esgotado";
+            return `${this.nome} - ${this.categoria} - ${MOEDA}${this.preco.toFixed(2)} - ${status} - ${disponibilidade}`;
+        },
+        
+        // Método para calcular valor total do estoque
+        calcularValorEstoque() {
+            return this.preco * this.estoque;
         }
-    },
-    {
-        id: 3,
-        nome: "AirPods Pro 2",
-        preco: 2199.00,
-        categoria: "Acessórios",
-        estoque: 25,
-        descricao: "AirPods Pro 2ª geração com cancelamento de ruído",
-        peso: 0.056,
-        ativo: true,
-        avaliacoes: 4.7,
-        
-        calcularPrecoComDesconto(percentual) {
-            return this.preco * (1 - percentual / 100);
+    };
+}
+
+// FUNÇÃO PARA INICIALIZAR O BANCO DE DADOS DE PRODUTOS
+function inicializarBancoDadosProdutos() {
+    const dadosIniciais = [
+        {
+            id: 1,
+            nome: "iPhone 15 Pro",
+            preco: 8999.00,
+            categoria: "Smartphones",
+            estoque: 12,
+            descricao: "iPhone 15 Pro 256GB Titânio Natural",
+            peso: 0.187,
+            avaliacoes: 4.8
         },
-        
-        verificarDisponibilidade(quantidade = 1) {
-            return this.ativo && this.estoque >= quantidade;
+        {
+            id: 2,
+            nome: "MacBook Pro M3",
+            preco: 15999.00,
+            categoria: "Notebooks",
+            estoque: 8,
+            descricao: "MacBook Pro 14 M3 512GB Space Gray",
+            peso: 1.6,
+            avaliacoes: 4.9
         },
-        
-        reduzirEstoque(quantidade) {
-            if (this.verificarDisponibilidade(quantidade)) {
-                this.estoque -= quantidade;
-                return true;
-            }
-            return false;
+        {
+            id: 3,
+            nome: "AirPods Pro 2",
+            preco: 2199.00,
+            categoria: "Acessórios",
+            estoque: 25,
+            descricao: "AirPods Pro 2ª geração com cancelamento de ruído",
+            peso: 0.056,
+            avaliacoes: 4.7
+        },
+        {
+            id: 4,
+            nome: "Apple Watch Series 9",
+            preco: 3999.00,
+            categoria: "Wearables",
+            estoque: 15,
+            descricao: "Apple Watch Series 9 45mm GPS Meia-noite",
+            peso: 0.038,
+            avaliacoes: 4.6
+        },
+        {
+            id: 5,
+            nome: "iPad Air M2",
+            preco: 5499.00,
+            categoria: "Tablets",
+            estoque: 18,
+            descricao: "iPad Air 11 M2 Wi-Fi 256GB Azul",
+            peso: 0.462,
+            avaliacoes: 4.8
         }
-    },
-    {
-        id: 4,
-        nome: "Apple Watch Series 9",
-        preco: 3999.00,
-        categoria: "Wearables",
-        estoque: 15,
-        descricao: "Apple Watch Series 9 45mm GPS Meia-noite",
-        peso: 0.038,
-        ativo: true,
-        avaliacoes: 4.6,
-        
-        calcularPrecoComDesconto(percentual) {
-            return this.preco * (1 - percentual / 100);
-        },
-        
-        verificarDisponibilidade(quantidade = 1) {
-            return this.ativo && this.estoque >= quantidade;
-        },
-        
-        reduzirEstoque(quantidade) {
-            if (this.verificarDisponibilidade(quantidade)) {
-                this.estoque -= quantidade;
-                return true;
-            }
-            return false;
-        }
-    },
-    {
-        id: 5,
-        nome: "iPad Air M2",
-        preco: 5499.00,
-        categoria: "Tablets",
-        estoque: 18,
-        descricao: "iPad Air 11 M2 Wi-Fi 256GB Azul",
-        peso: 0.462,
-        ativo: true,
-        avaliacoes: 4.8,
-        
-        calcularPrecoComDesconto(percentual) {
-            return this.preco * (1 - percentual / 100);
-        },
-        
-        verificarDisponibilidade(quantidade = 1) {
-            return this.ativo && this.estoque >= quantidade;
-        },
-        
-        reduzirEstoque(quantidade) {
-            if (this.verificarDisponibilidade(quantidade)) {
-                this.estoque -= quantidade;
-                return true;
-            }
-            return false;
-        }
+    ];
+    
+    return dadosIniciais.map(produto => 
+        criarProduto(
+            produto.id,
+            produto.nome,
+            produto.preco,
+            produto.categoria,
+            produto.estoque,
+            produto.descricao,
+            produto.peso,
+            produto.avaliacoes
+        )
+    );
+}
+
+// INICIALIZANDO O BANCO DE DADOS
+const produtos = inicializarBancoDadosProdutos();
+
+// FUNÇÃO PARA ADICIONAR NOVO PRODUTO AO BANCO
+function adicionarProdutoAoBanco(nome, preco, categoria, estoque, descricao, peso, avaliacoes) {
+    // Gerar novo ID baseado no maior ID existente
+    const maiorId = produtos.length > 0 ? Math.max(...produtos.map(p => p.id)) : 0;
+    const novoId = maiorId + 1;
+    
+    // Validações básicas
+    if (!nome || nome.length < 2) {
+        return { sucesso: false, erro: "Nome deve ter pelo menos 2 caracteres" };
     }
-];
+    
+    if (!preco || preco <= 0) {
+        return { sucesso: false, erro: "Preço deve ser maior que zero" };
+    }
+    
+    if (!categoria || categoria.length < 2) {
+        return { sucesso: false, erro: "Categoria deve ter pelo menos 2 caracteres" };
+    }
+    
+    if (estoque < 0) {
+        return { sucesso: false, erro: "Estoque não pode ser negativo" };
+    }
+    
+    // Verificar se produto já existe pelo nome
+    const produtoExistente = produtos.find(p => 
+        p.nome.toLowerCase() === nome.toLowerCase()
+    );
+    
+    if (produtoExistente) {
+        return { sucesso: false, erro: "Produto com este nome já existe" };
+    }
+    
+    // Criar e adicionar produto
+    const novoProduto = criarProduto(
+        novoId,
+        nome,
+        preco,
+        categoria,
+        estoque || 0,
+        descricao || "",
+        peso || 0,
+        avaliacoes || 5.0
+    );
+    
+    produtos.push(novoProduto);
+    
+    return { 
+        sucesso: true, 
+        produto: novoProduto,
+        mensagem: `Produto "${nome}" adicionado com sucesso!`
+    };
+}
+
+// FUNÇÃO PARA BUSCAR PRODUTO POR ID
+function buscarProdutoPorId(id) {
+    return produtos.find(produto => produto.id === id && produto.ativo) || null;
+}
+
+// FUNÇÃO PARA LISTAR PRODUTOS POR CATEGORIA
+function listarProdutosPorCategoria(categoria) {
+    return produtos.filter(produto => 
+        produto.categoria.toLowerCase() === categoria.toLowerCase() && produto.ativo
+    );
+}
 
 // =============================================================================
 // 3. SISTEMA DE USUÁRIOS (Passo 3)
@@ -731,6 +796,7 @@ console.log("✅ Tipos de dados (string, number, boolean, object, array)");
 console.log("✅ Objetos e métodos");
 console.log("✅ Arrays e manipulação");
 console.log("✅ Funções com parâmetros e retorno");
+console.log("✅ Factory Functions (criarProduto, criarUsuario)");
 console.log("✅ Estruturas de controle (if/else, switch)");
 console.log("✅ Estruturas de repetição (for, forEach)");
 console.log("✅ Validação de dados");
@@ -738,6 +804,7 @@ console.log("✅ Sistema CRUD completo");
 console.log("✅ Cálculos financeiros");
 console.log("✅ Manipulação de estado");
 console.log("✅ Tratamento de erros");
+console.log("✅ Modularização de código");
 
 console.log("\n💡 PRÓXIMOS PASSOS PARA EXPANDIR:");
 console.log("• Adicionar persistência de dados");
