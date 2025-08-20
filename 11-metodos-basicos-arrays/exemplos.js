@@ -257,6 +257,102 @@ const todosRemovidosOs2 = removerTodosElementos(numerosComMais2, 2);
 console.log("Todos os 2 removidos:", todosRemovidosOs2);
 console.log("Array final:", numerosComMais2);
 
+console.log("\n=== MÉTODO MAP() ===");
+
+// map() - cria novo array transformando cada elemento
+const numerosOriginais = [1, 2, 3, 4, 5];
+console.log("Array original:", numerosOriginais);
+
+// Dobrando cada número
+const dobrados = numerosOriginais.map(num => num * 2);
+console.log("Dobrados:", dobrados); // [2, 4, 6, 8, 10]
+
+// Elevando ao quadrado
+const quadrados = numerosOriginais.map(num => num ** 2);
+console.log("Quadrados:", quadrados); // [1, 4, 9, 16, 25]
+
+// Convertendo para strings
+const strings = numerosOriginais.map(num => `Número: ${num}`);
+console.log("Como strings:", strings);
+
+// map() com objetos
+const pessoasParaMap = [
+    { nome: "Ana", idade: 25 },
+    { nome: "Bruno", idade: 30 },
+    { nome: "Carla", idade: 28 }
+];
+
+// Extraindo apenas os nomes
+const nomes = pessoasParaMap.map(pessoa => pessoa.nome);
+console.log("Apenas nomes:", nomes); // ["Ana", "Bruno", "Carla"]
+
+// Criando objetos modificados
+const pessoasComIdade = pessoasParaMap.map(pessoa => ({
+    ...pessoa,
+    categoria: pessoa.idade >= 30 ? "adulto" : "jovem",
+    apresentacao: `Sou ${pessoa.nome} e tenho ${pessoa.idade} anos`
+}));
+console.log("Pessoas com categoria:");
+pessoasComIdade.forEach(p => console.log(`- ${p.apresentacao} (${p.categoria})`));
+
+// map() com índice e array
+const comIndices = numerosOriginais.map((valor, indice, array) => ({
+    valor,
+    indice,
+    posicao: `${indice + 1} de ${array.length}`,
+    ehPar: valor % 2 === 0
+}));
+console.log("Com informações do índice:");
+comIndices.forEach(item => 
+    console.log(`Posição ${item.posicao}: ${item.valor} (${item.ehPar ? 'par' : 'ímpar'})`)
+);
+
+// map() vs outros métodos
+console.log("\nComparando map() com outros métodos:");
+
+const testeNumeros = [1, 2, 3, 4, 5];
+
+// map() - transforma todos os elementos (sempre retorna array do mesmo tamanho)
+const mapeados = testeNumeros.map(n => n * 3);
+console.log("map() - todos transformados:", mapeados); // [3, 6, 9, 12, 15]
+
+// forEach() - executa função para cada elemento (não retorna novo array)
+console.log("forEach() - apenas executa:");
+testeNumeros.forEach(n => console.log(`  Processando: ${n}`));
+
+// Encadeamento com map()
+const resultado = testeNumeros
+    .map(n => n * 2)        // [2, 4, 6, 8, 10]
+    .map(n => n + 1)        // [3, 5, 7, 9, 11]
+    .map(n => `Item: ${n}`); // ["Item: 3", "Item: 5", ...]
+
+console.log("Encadeamento de maps:", resultado);
+
+// map() para conversões de tipos
+const stringNumbers = ["1", "2", "3", "4", "5"];
+const convertidos = stringNumbers.map(str => parseInt(str));
+console.log("Strings convertidas para números:", convertidos);
+
+const booleans = [true, false, true, false];
+const booleansParaTexto = booleans.map(bool => bool ? "Sim" : "Não");
+console.log("Booleans para texto:", booleansParaTexto);
+
+// map() com operações condicionais
+const idades = [15, 22, 17, 30, 12, 25];
+const classificacoes = idades.map(idade => {
+    if (idade < 13) return "criança";
+    if (idade < 18) return "adolescente";
+    if (idade < 60) return "adulto";
+    return "idoso";
+});
+console.log("Classificações por idade:", classificacoes);
+
+// map() é imutável (não modifica o array original)
+const original = [1, 2, 3];
+const modificado = original.map(n => n * 10);
+console.log("Original após map:", original); // [1, 2, 3] - não mudou
+console.log("Novo array:", modificado); // [10, 20, 30]
+
 console.log("\n=== ORDENAÇÃO PERSONALIZADA ===");
 
 const estudantes = [
