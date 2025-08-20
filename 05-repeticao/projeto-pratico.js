@@ -1,170 +1,505 @@
+// =====================================================================================
+// PROJETO PRÁTICO: SISTEMA DE ANÁLISE DE VENDAS E RELATÓRIOS
+// =====================================================================================
+//
+// 🎯 OBJETIVO: Criar um sistema completo que use todas as estruturas de repetição
+// para processar dados de vendas, gerar relatórios e análises estatísticas.
 
-// Projeto Prático: Sistema de Vendas e Relatórios
+console.log("🚀 SISTEMA DE ANÁLISE DE VENDAS");
+console.log("=".repeat(60));
 
-console.log("=== SISTEMA DE VENDAS E RELATÓRIOS ===");
+// =====================================================================================
+// 1. DADOS DE VENDAS (SIMULAÇÃO)
+// =====================================================================================
 
-// Base de dados de vendas
 const vendas = [
-    { id: 1, produto: "Notebook", categoria: "Eletrônicos", preco: 2500, quantidade: 2, vendedor: "João" },
-    { id: 2, produto: "Mouse", categoria: "Eletrônicos", preco: 50, quantidade: 10, vendedor: "Maria" },
-    { id: 3, produto: "Teclado", categoria: "Eletrônicos", preco: 120, quantidade: 5, vendedor: "João" },
-    { id: 4, produto: "Cadeira", categoria: "Móveis", preco: 300, quantidade: 3, vendedor: "Pedro" },
-    { id: 5, produto: "Mesa", categoria: "Móveis", preco: 500, quantidade: 2, vendedor: "Maria" },
-    { id: 6, produto: "Monitor", categoria: "Eletrônicos", preco: 800, quantidade: 4, vendedor: "João" },
-    { id: 7, produto: "Sofá", categoria: "Móveis", preco: 1200, quantidade: 1, vendedor: "Pedro" }
+    { id: 1, produto: "Notebook", categoria: "Eletrônicos", valor: 2500.00, vendedor: "Ana", mes: 1, regiao: "Sudeste" },
+    { id: 2, produto: "Mouse", categoria: "Acessórios", valor: 50.00, vendedor: "João", mes: 1, regiao: "Norte" },
+    { id: 3, produto: "Teclado", categoria: "Acessórios", valor: 150.00, vendedor: "Maria", mes: 1, regiao: "Sudeste" },
+    { id: 4, produto: "Monitor", categoria: "Eletrônicos", valor: 800.00, vendedor: "Ana", mes: 2, regiao: "Sul" },
+    { id: 5, produto: "Smartphone", categoria: "Eletrônicos", valor: 1200.00, vendedor: "Pedro", mes: 2, regiao: "Nordeste" },
+    { id: 6, produto: "Headset", categoria: "Acessórios", valor: 200.00, vendedor: "João", mes: 2, regiao: "Norte" },
+    { id: 7, produto: "Tablet", categoria: "Eletrônicos", valor: 900.00, vendedor: "Maria", mes: 3, regiao: "Centro-Oeste" },
+    { id: 8, produto: "Webcam", categoria: "Acessórios", valor: 300.00, vendedor: "Ana", mes: 3, regiao: "Sudeste" },
+    { id: 9, produto: "Impressora", categoria: "Equipamentos", valor: 600.00, vendedor: "Pedro", mes: 3, regiao: "Sul" },
+    { id: 10, produto: "Scanner", categoria: "Equipamentos", valor: 400.00, vendedor: "Lucia", mes: 1, regiao: "Nordeste" },
+    { id: 11, produto: "Projetor", categoria: "Equipamentos", valor: 1800.00, vendedor: "Carlos", mes: 2, regiao: "Sudeste" },
+    { id: 12, produto: "Roteador", categoria: "Redes", valor: 250.00, vendedor: "Lucia", mes: 3, regiao: "Norte" }
 ];
 
-console.log("=== RELATÓRIO DE VENDAS TOTAIS ===");
+const vendedores = [
+    { nome: "Ana", meta: 5000, comissao: 0.05 },
+    { nome: "João", meta: 3000, comissao: 0.04 },
+    { nome: "Maria", meta: 4000, comissao: 0.045 },
+    { nome: "Pedro", meta: 3500, comissao: 0.04 },
+    { nome: "Lucia", meta: 2500, comissao: 0.035 },
+    { nome: "Carlos", meta: 4500, comissao: 0.05 }
+];
 
-let vendaTotal = 0;
-let quantidadeTotal = 0;
+// =====================================================================================
+// 2. ANÁLISES COM FOR TRADICIONAL
+// =====================================================================================
 
-// Loop for para calcular totais
-for (let i = 0; i < vendas.length; i++) {
-    let valorVenda = vendas[i].preco * vendas[i].quantidade;
-    vendaTotal += valorVenda;
-    quantidadeTotal += vendas[i].quantidade;
-    
-    console.log(`Venda ${i + 1}: ${vendas[i].produto} - ${vendas[i].quantidade}x R$${vendas[i].preco} = R$${valorVenda}`);
+console.log("\n📊 ANÁLISES COM FOR TRADICIONAL");
+console.log("-".repeat(50));
+
+function analisarVendasPorMes() {
+    console.log("💰 VENDAS POR MÊS:");
+
+    // Array para armazenar totais por mês
+    const totaisMes = [0, 0, 0]; // índices 0, 1, 2 para meses 1, 2, 3
+    const contagemMes = [0, 0, 0];
+
+    // Loop tradicional para calcular totais
+    for (let i = 0; i < vendas.length; i++) {
+        const venda = vendas[i];
+        const indiceMes = venda.mes - 1; // converter para índice do array
+
+        totaisMes[indiceMes] += venda.valor;
+        contagemMes[indiceMes]++;
+    }
+
+    // Exibir resultados
+    const meses = ["Janeiro", "Fevereiro", "Março"];
+    for (let i = 0; i < meses.length; i++) {
+        const media = contagemMes[i] > 0 ? totaisMes[i] / contagemMes[i] : 0;
+        console.log(`${meses[i]}:`);
+        console.log(`  Total: R$ ${totaisMes[i].toFixed(2)}`);
+        console.log(`  Vendas: ${contagemMes[i]}`);
+        console.log(`  Média: R$ ${media.toFixed(2)}`);
+    }
+
+    return { totaisMes, contagemMes };
 }
 
-console.log(`\n💰 Total em vendas: R$${vendaTotal}`);
-console.log(`📦 Total de itens vendidos: ${quantidadeTotal}`);
+function encontrarTopProdutos(limite = 3) {
+    console.log(`\n🏆 TOP ${limite} PRODUTOS (POR VALOR):`);
 
-console.log("\n=== RELATÓRIO POR CATEGORIA ===");
+    // Criar cópia do array para ordenação
+    const vendasOrdenadas = [];
+    for (let i = 0; i < vendas.length; i++) {
+        vendasOrdenadas[i] = vendas[i];
+    }
 
-// Objeto para armazenar totais por categoria
-let categorias = {};
+    // Ordenação manual (bubble sort)
+    for (let i = 0; i < vendasOrdenadas.length - 1; i++) {
+        for (let j = 0; j < vendasOrdenadas.length - 1 - i; j++) {
+            if (vendasOrdenadas[j].valor < vendasOrdenadas[j + 1].valor) {
+                // Trocar posições
+                const temp = vendasOrdenadas[j];
+                vendasOrdenadas[j] = vendasOrdenadas[j + 1];
+                vendasOrdenadas[j + 1] = temp;
+            }
+        }
+    }
 
-// For...of para iterar sobre vendas
-for (let venda of vendas) {
-    if (!categorias[venda.categoria]) {
-        categorias[venda.categoria] = {
-            total: 0,
-            quantidade: 0,
-            produtos: []
+    // Exibir top produtos
+    for (let i = 0; i < limite && i < vendasOrdenadas.length; i++) {
+        const venda = vendasOrdenadas[i];
+        console.log(`${i + 1}º. ${venda.produto} - R$ ${venda.valor.toFixed(2)} (${venda.vendedor})`);
+    }
+
+    return vendasOrdenadas.slice(0, limite);
+}
+
+// =====================================================================================
+// 3. ANÁLISES COM WHILE
+// =====================================================================================
+
+console.log("\n📊 ANÁLISES COM WHILE");
+console.log("-".repeat(50));
+
+function processarMetasVendedores() {
+    console.log("🎯 ANÁLISE DE METAS DOS VENDEDORES:");
+
+    let indiceVendedor = 0;
+
+    while (indiceVendedor < vendedores.length) {
+        const vendedor = vendedores[indiceVendedor];
+        let totalVendas = 0;
+        let quantidadeVendas = 0;
+
+        // Calcular total do vendedor
+        let indiceVenda = 0;
+        while (indiceVenda < vendas.length) {
+            if (vendas[indiceVenda].vendedor === vendedor.nome) {
+                totalVendas += vendas[indiceVenda].valor;
+                quantidadeVendas++;
+            }
+            indiceVenda++;
+        }
+
+        const percentualMeta = (totalVendas / vendedor.meta) * 100;
+        const comissaoGanha = totalVendas * vendedor.comissao;
+
+        console.log(`\n👤 ${vendedor.nome}:`);
+        console.log(`  Meta: R$ ${vendedor.meta.toFixed(2)}`);
+        console.log(`  Vendido: R$ ${totalVendas.toFixed(2)}`);
+        console.log(`  Cumprimento: ${percentualMeta.toFixed(1)}%`);
+        console.log(`  Vendas: ${quantidadeVendas}`);
+        console.log(`  Comissão: R$ ${comissaoGanha.toFixed(2)}`);
+        console.log(`  Status: ${percentualMeta >= 100 ? "✅ Meta Atingida" : "⚠️ Abaixo da Meta"}`);
+
+        indiceVendedor++;
+    }
+}
+
+function buscarVendasPorFaixaValor(valorMin, valorMax) {
+    console.log(`\n🔍 VENDAS ENTRE R$ ${valorMin} E R$ ${valorMax}:`);
+
+    const vendasEncontradas = [];
+    let indice = 0;
+
+    while (indice < vendas.length) {
+        const venda = vendas[indice];
+
+        if (venda.valor >= valorMin && venda.valor <= valorMax) {
+            vendasEncontradas.push(venda);
+            console.log(`• ${venda.produto}: R$ ${venda.valor.toFixed(2)} (${venda.vendedor})`);
+        }
+
+        indice++;
+    }
+
+    console.log(`Total encontrado: ${vendasEncontradas.length} vendas`);
+    return vendasEncontradas;
+}
+
+// =====================================================================================
+// 4. ANÁLISES COM DO...WHILE
+// =====================================================================================
+
+console.log("\n📊 ANÁLISES COM DO...WHILE");
+console.log("-".repeat(50));
+
+function gerarRelatorioInterativo() {
+    console.log("📋 RELATÓRIO INTERATIVO:");
+
+    // Simular menu interativo
+    const opcoes = [1, 2, 3, 0]; // simular escolhas do usuário
+    let indiceOpcao = 0;
+    let opcao;
+
+    do {
+        opcao = opcoes[indiceOpcao] || 0;
+
+        console.log("\n=== MENU DE RELATÓRIOS ===");
+        console.log("1. Vendas por Categoria");
+        console.log("2. Vendas por Região");
+        console.log("3. Resumo Executivo");
+        console.log("0. Sair");
+        console.log(`Opção selecionada: ${opcao}`);
+
+        switch (opcao) {
+            case 1:
+                gerarRelatorioCategorias();
+                break;
+            case 2:
+                gerarRelatorioRegioes();
+                break;
+            case 3:
+                gerarResumoExecutivo();
+                break;
+            case 0:
+                console.log("👋 Encerrando relatórios...");
+                break;
+            default:
+                console.log("❌ Opção inválida");
+        }
+
+        indiceOpcao++;
+    } while (opcao !== 0 && indiceOpcao < opcoes.length);
+}
+
+function gerarRelatorioCategorias() {
+    console.log("\n📁 RELATÓRIO POR CATEGORIAS:");
+
+    const categorias = {};
+    let indice = 0;
+
+    // Agrupar por categoria
+    do {
+        const venda = vendas[indice];
+
+        if (!categorias[venda.categoria]) {
+            categorias[venda.categoria] = {
+                total: 0,
+                quantidade: 0,
+                produtos: []
+            };
+        }
+
+        categorias[venda.categoria].total += venda.valor;
+        categorias[venda.categoria].quantidade++;
+        categorias[venda.categoria].produtos.push(venda.produto);
+
+        indice++;
+    } while (indice < vendas.length);
+
+    // Exibir resultados
+    for (let categoria in categorias) {
+        const dados = categorias[categoria];
+        const media = dados.total / dados.quantidade;
+
+        console.log(`\n📦 ${categoria}:`);
+        console.log(`  Total: R$ ${dados.total.toFixed(2)}`);
+        console.log(`  Vendas: ${dados.quantidade}`);
+        console.log(`  Média: R$ ${media.toFixed(2)}`);
+        console.log(`  Produtos: ${dados.produtos.join(", ")}`);
+    }
+}
+
+// =====================================================================================
+// 5. ANÁLISES COM FOR...IN
+// =====================================================================================
+
+console.log("\n📊 ANÁLISES COM FOR...IN");
+console.log("-".repeat(50));
+
+function analisarDadosVendedores() {
+    console.log("👥 ANÁLISE DETALHADA DOS VENDEDORES:");
+
+    const estatisticasVendedores = {};
+
+    // Inicializar estatísticas
+    for (let i = 0; i < vendedores.length; i++) {
+        const vendedor = vendedores[i];
+        estatisticasVendedores[vendedor.nome] = {
+            meta: vendedor.meta,
+            comissao: vendedor.comissao,
+            vendas: [],
+            totalVendido: 0,
+            categorias: {},
+            regioes: {}
         };
     }
-    
-    let valorVenda = venda.preco * venda.quantidade;
-    categorias[venda.categoria].total += valorVenda;
-    categorias[venda.categoria].quantidade += venda.quantidade;
-    categorias[venda.categoria].produtos.push(venda.produto);
-}
 
-// For...in para mostrar relatório por categoria
-for (let categoria in categorias) {
-    console.log(`\n📁 Categoria: ${categoria}`);
-    console.log(`   💰 Total: R$${categorias[categoria].total}`);
-    console.log(`   📦 Quantidade: ${categorias[categoria].quantidade} itens`);
-    console.log(`   📝 Produtos: ${categorias[categoria].produtos.join(", ")}`);
-}
+    // Processar vendas
+    for (let i = 0; i < vendas.length; i++) {
+        const venda = vendas[i];
+        const nomeVendedor = venda.vendedor;
 
-console.log("\n=== RANKING DE VENDEDORES ===");
+        if (estatisticasVendedores[nomeVendedor]) {
+            estatisticasVendedores[nomeVendedor].vendas.push(venda);
+            estatisticasVendedores[nomeVendedor].totalVendido += venda.valor;
 
-let vendedores = {};
+            // Contar por categoria
+            const cat = venda.categoria;
+            estatisticasVendedores[nomeVendedor].categorias[cat] = 
+                (estatisticasVendedores[nomeVendedor].categorias[cat] || 0) + 1;
 
-// Calcular vendas por vendedor
-for (let venda of vendas) {
-    if (!vendedores[venda.vendedor]) {
-        vendedores[venda.vendedor] = {
-            total: 0,
-            quantidade: 0,
-            vendas: 0
-        };
+            // Contar por região
+            const reg = venda.regiao;
+            estatisticasVendedores[nomeVendedor].regioes[reg] = 
+                (estatisticasVendedores[nomeVendedor].regioes[reg] || 0) + 1;
+        }
     }
-    
-    let valorVenda = venda.preco * venda.quantidade;
-    vendedores[venda.vendedor].total += valorVenda;
-    vendedores[venda.vendedor].quantidade += venda.quantidade;
-    vendedores[venda.vendedor].vendas++;
+
+    // Exibir estatísticas usando for...in
+    for (let nomeVendedor in estatisticasVendedores) {
+        const dados = estatisticasVendedores[nomeVendedor];
+
+        console.log(`\n🧑‍💼 ${nomeVendedor}:`);
+        console.log(`  Total vendido: R$ ${dados.totalVendido.toFixed(2)}`);
+        console.log(`  Número de vendas: ${dados.vendas.length}`);
+
+        console.log("  Categorias vendidas:");
+        for (let categoria in dados.categorias) {
+            console.log(`    ${categoria}: ${dados.categorias[categoria]} vendas`);
+        }
+
+        console.log("  Regiões atendidas:");
+        for (let regiao in dados.regioes) {
+            console.log(`    ${regiao}: ${dados.regioes[regiao]} vendas`);
+        }
+
+        // Calcular comissão
+        const comissaoTotal = dados.totalVendido * dados.comissao;
+        console.log(`  Comissão total: R$ ${comissaoTotal.toFixed(2)}`);
+    }
 }
 
-// Converter objeto em array para ordenar
-let rankingVendedores = [];
-for (let nome in vendedores) {
-    rankingVendedores.push({
-        nome: nome,
-        total: vendedores[nome].total,
-        quantidade: vendedores[nome].quantidade,
-        vendas: vendedores[nome].vendas
+// =====================================================================================
+// 6. ANÁLISES COM FOR...OF
+// =====================================================================================
+
+console.log("\n📊 ANÁLISES COM FOR...OF");
+console.log("-".repeat(50));
+
+function gerarRelatorioRegioes() {
+    console.log("🗺️ RELATÓRIO POR REGIÕES:");
+
+    const dadosRegioes = new Map();
+
+    // Processar vendas por região
+    for (let venda of vendas) {
+        if (!dadosRegioes.has(venda.regiao)) {
+            dadosRegioes.set(venda.regiao, {
+                vendas: [],
+                total: 0,
+                vendedores: new Set()
+            });
+        }
+
+        const dadosRegiao = dadosRegioes.get(venda.regiao);
+        dadosRegiao.vendas.push(venda);
+        dadosRegiao.total += venda.valor;
+        dadosRegiao.vendedores.add(venda.vendedor);
+    }
+
+    // Exibir dados das regiões
+    for (let [regiao, dados] of dadosRegioes) {
+        const media = dados.total / dados.vendas.length;
+
+        console.log(`\n🌍 ${regiao}:`);
+        console.log(`  Total: R$ ${dados.total.toFixed(2)}`);
+        console.log(`  Vendas: ${dados.vendas.length}`);
+        console.log(`  Média por venda: R$ ${media.toFixed(2)}`);
+        console.log(`  Vendedores ativos: ${dados.vendedores.size}`);
+        console.log(`  Vendedores: ${Array.from(dados.vendedores).join(", ")}`);
+    }
+
+    // Ranking de regiões
+    const rankingRegioes = Array.from(dadosRegioes.entries())
+        .sort((a, b) => b[1].total - a[1].total);
+
+    console.log("\n🏆 RANKING DE REGIÕES POR FATURAMENTO:");
+    for (let [posicao, [regiao, dados]] of rankingRegioes.entries()) {
+        console.log(`${posicao + 1}º. ${regiao}: R$ ${dados.total.toFixed(2)}`);
+    }
+}
+
+function analisarTendenciasProdutos() {
+    console.log("\n📈 ANÁLISE DE TENDÊNCIAS DE PRODUTOS:");
+
+    const produtosPorMes = new Map();
+
+    // Agrupar vendas por produto e mês
+    for (let venda of vendas) {
+        const chave = venda.produto;
+
+        if (!produtosPorMes.has(chave)) {
+            produtosPorMes.set(chave, {
+                vendas: [],
+                vendasPorMes: [0, 0, 0],
+                valorTotal: 0
+            });
+        }
+
+        const dadosProduto = produtosPorMes.get(chave);
+        dadosProduto.vendas.push(venda);
+        dadosProduto.vendasPorMes[venda.mes - 1]++;
+        dadosProduto.valorTotal += venda.valor;
+    }
+
+    // Analisar tendências
+    for (let [produto, dados] of produtosPorMes) {
+        const vendas = dados.vendasPorMes;
+        let tendencia = "Estável";
+
+        // Calcular tendência simples
+        if (vendas[2] > vendas[1] && vendas[1] > vendas[0]) {
+            tendencia = "📈 Crescendo";
+        } else if (vendas[2] < vendas[1] && vendas[1] < vendas[0]) {
+            tendencia = "📉 Declinando";
+        }
+
+        console.log(`\n📦 ${produto}:`);
+        console.log(`  Vendas por mês: [${vendas.join(", ")}]`);
+        console.log(`  Valor total: R$ ${dados.valorTotal.toFixed(2)}`);
+        console.log(`  Tendência: ${tendencia}`);
+    }
+}
+
+// =====================================================================================
+// 7. ANÁLISES COM MÉTODOS DE ARRAY (forEach, map, filter, reduce)
+// =====================================================================================
+
+console.log("\n📊 ANÁLISES COM MÉTODOS DE ARRAY");
+console.log("-".repeat(50));
+
+function gerarResumoExecutivo() {
+    console.log("📋 RESUMO EXECUTIVO:");
+
+    // Total geral usando reduce
+    const totalGeral = vendas.reduce((total, venda) => total + venda.valor, 0);
+    console.log(`💰 Faturamento Total: R$ ${totalGeral.toFixed(2)}`);
+
+    // Vendas por categoria usando filter e reduce
+    const categorias = [...new Set(vendas.map(v => v.categoria))];
+    console.log("\n📊 Faturamento por Categoria:");
+
+    categorias.forEach(categoria => {
+        const vendasCategoria = vendas.filter(v => v.categoria === categoria);
+        const totalCategoria = vendasCategoria.reduce((total, v) => total + v.valor, 0);
+        const percentual = (totalCategoria / totalGeral) * 100;
+
+        console.log(`  ${categoria}: R$ ${totalCategoria.toFixed(2)} (${percentual.toFixed(1)}%)`);
     });
+
+    // Top vendedores usando map e sort
+    const vendedoresComTotal = vendedores.map(vendedor => {
+        const vendasVendedor = vendas.filter(v => v.vendedor === vendedor.nome);
+        const totalVendedor = vendasVendedor.reduce((total, v) => total + v.valor, 0);
+
+        return {
+            nome: vendedor.nome,
+            total: totalVendedor,
+            meta: vendedor.meta,
+            percentualMeta: (totalVendedor / vendedor.meta) * 100
+        };
+    }).sort((a, b) => b.total - a.total);
+
+    console.log("\n🏆 Ranking de Vendedores:");
+    vendedoresComTotal.forEach((vendedor, index) => {
+        const status = vendedor.percentualMeta >= 100 ? "✅" : "⚠️";
+        console.log(`  ${index + 1}º. ${vendedor.nome}: R$ ${vendedor.total.toFixed(2)} ${status}`);
+    });
+
+    // Estatísticas gerais
+    const valoresVendas = vendas.map(v => v.valor);
+    const maiorVenda = Math.max(...valoresVendas);
+    const menorVenda = Math.min(...valoresVendas);
+    const mediaVenda = totalGeral / vendas.length;
+
+    console.log("\n📈 Estatísticas Gerais:");
+    console.log(`  Total de vendas: ${vendas.length}`);
+    console.log(`  Valor médio por venda: R$ ${mediaVenda.toFixed(2)}`);
+    console.log(`  Maior venda: R$ ${maiorVenda.toFixed(2)}`);
+    console.log(`  Menor venda: R$ ${menorVenda.toFixed(2)}`);
 }
 
-// Ordenar por total de vendas (método manual com loops)
-for (let i = 0; i < rankingVendedores.length - 1; i++) {
-    for (let j = 0; j < rankingVendedores.length - 1 - i; j++) {
-        if (rankingVendedores[j].total < rankingVendedores[j + 1].total) {
-            // Trocar posições
-            let temp = rankingVendedores[j];
-            rankingVendedores[j] = rankingVendedores[j + 1];
-            rankingVendedores[j + 1] = temp;
-        }
-    }
-}
+// =====================================================================================
+// 8. EXECUÇÃO DO SISTEMA
+// =====================================================================================
 
-console.log("🏆 Ranking de Vendedores:");
-for (let i = 0; i < rankingVendedores.length; i++) {
-    let vendedor = rankingVendedores[i];
-    let posicao = i + 1;
-    let emoji = posicao === 1 ? "🥇" : posicao === 2 ? "🥈" : posicao === 3 ? "🥉" : "📊";
-    
-    console.log(`${emoji} ${posicao}º lugar: ${vendedor.nome}`);
-    console.log(`   💰 Total: R$${vendedor.total}`);
-    console.log(`   📦 Itens vendidos: ${vendedor.quantidade}`);
-    console.log(`   🛒 Número de vendas: ${vendedor.vendas}`);
-}
+console.log("\n🎯 EXECUTANDO ANÁLISES COMPLETAS");
+console.log("=".repeat(60));
 
-console.log("\n=== PRODUTOS MAIS VENDIDOS ===");
+// Executar todas as análises
+analisarVendasPorMes();
+encontrarTopProdutos();
+processarMetasVendedores();
+buscarVendasPorFaixaValor(500, 1500);
+gerarRelatorioInterativo();
+analisarDadosVendedores();
+gerarRelatorioRegioes();
+analisarTendenciasProdutos();
+gerarResumoExecutivo();
 
-// Simulação de busca de produtos com maior quantidade
-let produtoMaisVendido = vendas[0];
-let maiorQuantidade = vendas[0].quantidade;
-
-for (let i = 1; i < vendas.length; i++) {
-    if (vendas[i].quantidade > maiorQuantidade) {
-        maiorQuantidade = vendas[i].quantidade;
-        produtoMaisVendido = vendas[i];
-    }
-}
-
-console.log("🎯 Produto mais vendido em quantidade:");
-console.log(`   📝 Produto: ${produtoMaisVendido.produto}`);
-console.log(`   📦 Quantidade: ${produtoMaisVendido.quantidade} unidades`);
-console.log(`   👨‍💼 Vendedor: ${produtoMaisVendido.vendedor}`);
-
-console.log("\n=== SIMULAÇÃO DE METAS ===");
-
-const metaMensal = 8000;
-let diasRestantes = 10;
-let vendaAtual = vendaTotal;
-
-console.log(`Meta mensal: R$${metaMensal}`);
-console.log(`Vendido até agora: R$${vendaAtual}`);
-console.log(`Dias restantes: ${diasRestantes}`);
-
-if (vendaAtual >= metaMensal) {
-    console.log("🎉 Meta já foi atingida!");
-} else {
-    let faltaVender = metaMensal - vendaAtual;
-    let mediaDiaria = faltaVender / diasRestantes;
-    
-    console.log(`💪 Falta vender: R$${faltaVender}`);
-    console.log(`📈 Média diária necessária: R$${mediaDiaria.toFixed(2)}`);
-    
-    // Simulação dos próximos dias
-    console.log("\n📅 Simulação dos próximos dias:");
-    let vendaSimulada = vendaAtual;
-    
-    for (let dia = 1; dia <= diasRestantes && vendaSimulada < metaMensal; dia++) {
-        let vendaDia = Math.random() * mediaDiaria * 2; // Venda aleatória
-        vendaSimulada += vendaDia;
-        
-        console.log(`Dia ${dia}: +R$${vendaDia.toFixed(2)} (Total: R$${vendaSimulada.toFixed(2)})`);
-        
-        if (vendaSimulada >= metaMensal) {
-            console.log(`🎉 Meta atingida no dia ${dia}!`);
-            break;
-        }
-    }
-}
+console.log("\n" + "=".repeat(60));
+console.log("✅ SISTEMA DE ANÁLISE DE VENDAS CONCLUÍDO!");
+console.log("\n🎓 Estruturas de repetição utilizadas:");
+console.log("   • for tradicional: análises básicas e ordenação");
+console.log("   • while: processamento de metas e buscas");
+console.log("   • do...while: menu interativo");
+console.log("   • for...in: processamento de objetos");
+console.log("   • for...of: iteração de arrays e Maps");
+console.log("   • forEach, map, filter, reduce: análises funcionais");
+console.log("\n💼 Funcionalidades implementadas:");
+console.log("   • Análise de vendas por período");
+console.log("   • Ranking de produtos e vendedores");
+console.log("   • Controle de metas");
+console.log("   • Relatórios por categoria e região");
+console.log("   • Análise de tendências");
+console.log("   • Resumo executivo completo");
